@@ -16,11 +16,12 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run icons && tsc && vite build && electron-builder",
-    "build:linux": "npm run icons && tsc && vite build && electron-builder --linux deb AppImage",
-    "build:snap": "npm run icons && tsc && vite build && electron-builder --linux snap",
+    "build:linux": "npm run icons && npm run download-frpc && tsc && vite build && electron-builder --linux deb AppImage",
+    "build:snap": "npm run icons && npm run download-frpc && tsc && vite build && electron-builder --linux snap",
     "build:win": "npm run icons && tsc && vite build && electron-builder --win",
     "build:mac": "npm run icons && tsc && vite build && electron-builder --mac",
     "icons": "node scripts/generate-icons.js",
+    "download-frpc": "node scripts/download-frpc.js",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
@@ -52,6 +53,12 @@
       "dist/**/*",
       "dist-electron/**/*",
       "package.json"
+    ],
+    "extraFiles": [
+      {
+        "from": "resources/bin/frpc",
+        "to": "frpc"
+      }
     ],
     "extraMetadata": {
       "main": "dist-electron/main.js"

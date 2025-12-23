@@ -1,8 +1,9 @@
 import { spawn, ChildProcess, execSync } from 'child_process'
 import { EventEmitter } from 'events'
 import { existsSync } from 'fs'
-import { Notification } from 'electron'
+import { Notification, app } from 'electron'
 import { ConfigManager } from './config-manager'
+import { join, dirname } from 'path'
 import * as net from 'net'
 
 export interface FrpcStatus {
@@ -33,15 +34,34 @@ export class FrpcManager extends EventEmitter {
   }
 
   private findFrpcBinary(): string | null {
-    // Check common locations
-    const locations = [
+    // Check bundled location first (for packaged app)
+    const bundledLocations = [
+      // Next to the executable (extraFiles)
+      join(dirname(app.getPath('exe')), 'frpc'),
+      // In resources (for some packaging methods)
+      join(process.resourcesPath || '', 'frpc'),
+      // Snap location ($SNAP env var)
+      join(process.env.SNAP || '', 'frpc'),
+      // Flatpak location
+      '/app/bin/frpc'
+    ]
+
+    // Check bundled locations first
+    for (const loc of bundledLocations) {
+      if (existsSync(loc)) {
+        return loc
+      }
+    }
+
+    // Check common system locations
+    const systemLocations = [
       '/usr/local/bin/frpc',
       '/usr/bin/frpc',
       '/opt/frp-gui/frpc/frpc',
       'frpc' // In PATH
     ]
 
-    for (const loc of locations) {
+    for (const loc of systemLocations) {
       if (loc === 'frpc' || existsSync(loc)) {
         return loc
       }
