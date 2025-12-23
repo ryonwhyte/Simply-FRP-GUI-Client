@@ -1,22 +1,23 @@
 {
   "name": "simply-frp-gui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight desktop GUI for managing FRP tunnels",
   "main": "dist-electron/main.js",
   "author": {
     "name": "Ryon Whyte",
     "email": "ryon@sitepact.com"
   },
-  "homepage": "https://github.com/ryon-whyte/simply-frp-gui",
+  "homepage": "https://github.com/ryonwhyte/Simply-FRP-GUI-Client",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ryon-whyte/simply-frp-gui.git"
+    "url": "https://github.com/ryonwhyte/Simply-FRP-GUI-Client.git"
   },
   "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "npm run icons && tsc && vite build && electron-builder",
-    "build:linux": "npm run icons && tsc && vite build && electron-builder --linux deb",
+    "build:linux": "npm run icons && tsc && vite build && electron-builder --linux deb AppImage",
+    "build:snap": "npm run icons && tsc && vite build && electron-builder --linux snap",
     "build:win": "npm run icons && tsc && vite build && electron-builder --win",
     "build:mac": "npm run icons && tsc && vite build && electron-builder --mac",
     "icons": "node scripts/generate-icons.js",
@@ -55,8 +56,14 @@
     "extraMetadata": {
       "main": "dist-electron/main.js"
     },
+    "snap": {
+      "summary": "Desktop GUI for managing FRP tunnels",
+      "description": "A lightweight desktop application for managing FRP (Fast Reverse Proxy) tunnels. Expose local services to the internet with ease.",
+      "category": "Development",
+      "plugs": ["home", "network", "network-bind", "desktop", "desktop-legacy", "wayland", "x11", "unity7", "browser-support", "password-manager-service"]
+    },
     "linux": {
-      "target": ["deb", "AppImage"],
+      "target": ["deb", "AppImage", "snap"],
       "category": "Development",
       "icon": "resources/icons",
       "desktop": {

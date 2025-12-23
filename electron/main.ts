@@ -112,6 +112,12 @@ function createAppMenu() {
           click: () => {
             shell.openExternal('https://github.com/fatedier/frp')
           }
+        },
+        {
+          label: 'GitHub Repository',
+          click: () => {
+            shell.openExternal('https://github.com/ryonwhyte/Simply-FRP-GUI-Client')
+          }
         }
       ]
     }

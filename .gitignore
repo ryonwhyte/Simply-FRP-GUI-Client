@@ -4,7 +4,16 @@ node_modules/
 # Build output
 dist/
 dist-electron/
-release/
+# release/ - keeping releases in repo
+release/linux-unpacked/
+release/builder-debug.yml
+release/latest-linux.yml
+
+# Snapcraft build artifacts
+parts/
+stage/
+prime/
+/*.snap
 
 # IDE
 .idea/

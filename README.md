@@ -6,6 +6,8 @@ A lightweight desktop application for managing FRP (Fast Reverse Proxy) tunnels 
 ![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)
 ![Electron](https://img.shields.io/badge/electron-28-blue.svg)
 
+[![Get it from the Snap Store](https://snapcraft.io/en/dark/install.svg)](https://snapcraft.io/simply-frp-gui)
+
 ## Features
 
 ### Core
@@ -39,11 +41,18 @@ A lightweight desktop application for managing FRP (Fast Reverse Proxy) tunnels 
 
 ## Installation
 
-### From .deb Package (Recommended)
+### From Snap Store (Recommended)
 
 ```bash
-# Download the latest release
-sudo dpkg -i simply-frp-gui_0.1.0_amd64.deb
+sudo snap install simply-frp-gui
+```
+
+### From .deb Package
+
+Download: [simply-frp-gui_0.1.1_amd64.deb](https://github.com/ryonwhyte/Simply-FRP-GUI-Client/raw/main/release/simply-frp-gui_0.1.1_amd64.deb)
+
+```bash
+sudo dpkg -i simply-frp-gui_0.1.1_amd64.deb
 
 # If there are dependency issues
 sudo apt-get install -f
@@ -54,8 +63,8 @@ The installer automatically downloads and installs the **latest version** of `fr
 ### From AppImage
 
 ```bash
-chmod +x Simply-FRP-GUI-0.1.0.AppImage
-./Simply-FRP-GUI-0.1.0.AppImage
+chmod +x Simply-FRP-GUI-0.1.1.AppImage
+./Simply-FRP-GUI-0.1.1.AppImage
 ```
 
 Note: AppImage requires manual frpc installation.
@@ -157,8 +166,8 @@ http://your-frp-server:remote-port
 
 ```bash
 # Clone the repository
-git clone https://github.com/ryon-whyte/simply-frp-gui.git
-cd simply-frp-gui
+git clone https://github.com/ryonwhyte/Simply-FRP-GUI-Client.git
+cd Simply-FRP-GUI-Client
 
 # Install dependencies
 npm install
