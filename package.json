@@ -1,6 +1,6 @@
 {
   "name": "simply-frp-gui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A lightweight desktop GUI for managing FRP tunnels",
   "main": "dist-electron/main.js",
   "author": {
