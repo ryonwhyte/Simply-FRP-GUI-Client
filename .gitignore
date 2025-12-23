@@ -9,6 +9,9 @@ release/linux-unpacked/
 release/builder-debug.yml
 release/latest-linux.yml
 
+# Downloaded binaries (built at build time)
+resources/bin/
+
 # Snapcraft build artifacts
 parts/
 stage/
@@ -49,3 +52,5 @@ coverage/
 
 # Generated config (runtime)
 frpc.toml
+.venv/
+flatpak/repo/
