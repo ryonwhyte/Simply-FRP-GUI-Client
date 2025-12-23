@@ -1,0 +1,97 @@
+#!/bin/bash
+set -e
+
+# Fix chrome-sandbox permissions (required for Electron)
+SANDBOX="/opt/simply-frp-gui/chrome-sandbox"
+if [ -f "$SANDBOX" ]; then
+    echo "Setting chrome-sandbox SUID permissions..."
+    chown root:root "$SANDBOX"
+    chmod 4755 "$SANDBOX"
+fi
+
+# Create config directory
+mkdir -p /etc/frp-gui
+chmod 755 /etc/frp-gui
+
+FRPC_INSTALL_DIR="/usr/local/bin"
+FRPC_BIN="$FRPC_INSTALL_DIR/frpc"
+TMP_DIR=$(mktemp -d)
+
+# Check if frpc already exists and is executable
+if [ -x "$FRPC_BIN" ]; then
+    echo "frpc is already installed at $FRPC_BIN"
+    echo "Simply FRP GUI installation complete!"
+    exit 0
+fi
+
+echo "Fetching latest frpc version..."
+
+# Get latest version from GitHub API
+if command -v curl &> /dev/null; then
+    LATEST_VERSION=$(curl -fsSL https://api.github.com/repos/fatedier/frp/releases/latest | grep '"tag_name"' | cut -d '"' -f 4 | sed 's/^v//')
+elif command -v wget &> /dev/null; then
+    LATEST_VERSION=$(wget -qO- https://api.github.com/repos/fatedier/frp/releases/latest | grep '"tag_name"' | cut -d '"' -f 4 | sed 's/^v//')
+else
+    echo "Error: Neither curl nor wget is available"
+    exit 1
+fi
+
+if [ -z "$LATEST_VERSION" ]; then
+    echo "Error: Could not determine latest frpc version"
+    exit 1
+fi
+
+echo "Installing frpc v${LATEST_VERSION}..."
+
+# Determine architecture
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64)
+        FRP_ARCH="amd64"
+        ;;
+    aarch64)
+        FRP_ARCH="arm64"
+        ;;
+    armv7l)
+        FRP_ARCH="arm"
+        ;;
+    *)
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
+
+# Download URL
+DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${LATEST_VERSION}/frp_${LATEST_VERSION}_linux_${FRP_ARCH}.tar.gz"
+
+echo "Downloading from $DOWNLOAD_URL..."
+
+# Download and extract
+cd "$TMP_DIR"
+if command -v curl &> /dev/null; then
+    curl -fsSL "$DOWNLOAD_URL" -o frp.tar.gz
+elif command -v wget &> /dev/null; then
+    wget -q "$DOWNLOAD_URL" -O frp.tar.gz
+else
+    echo "Error: Neither curl nor wget is available"
+    exit 1
+fi
+
+# Extract
+tar -xzf frp.tar.gz
+
+# Find and install frpc
+FRPC_SRC=$(find . -name "frpc" -type f | head -1)
+if [ -z "$FRPC_SRC" ]; then
+    echo "Error: frpc binary not found in archive"
+    exit 1
+fi
+
+# Install
+install -m 755 "$FRPC_SRC" "$FRPC_BIN"
+
+# Cleanup
+rm -rf "$TMP_DIR"
+
+echo "frpc installed successfully to $FRPC_BIN"
+echo "Simply FRP GUI installation complete!"

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+# Only run on complete removal (not upgrade)
+if [ "$1" = "purge" ]; then
+    echo "Cleaning up Simply FRP GUI..."
+
+    # Remove config directory
+    rm -rf /etc/frp-gui
+
+    # Note: We intentionally DO NOT remove frpc binary
+    # as other applications might depend on it
+
+    echo "Cleanup complete"
+fi
