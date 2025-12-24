@@ -54,3 +54,4 @@ coverage/
 frpc.toml
 .venv/
 flatpak/repo/
+docs/FLATHUB_PUBLISHING.md
