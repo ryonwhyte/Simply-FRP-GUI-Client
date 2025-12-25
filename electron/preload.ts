@@ -60,6 +60,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getAutoStart: (): Promise<boolean> =>
     ipcRenderer.invoke('app:getAutoStart'),
 
+  // Open external URL in system browser
+  openExternal: (url: string): Promise<{ success: boolean; error?: string }> =>
+    ipcRenderer.invoke('app:openExternal', url),
+
   // Event listeners
   onFrpcLog: (callback: (log: string) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, log: string) => callback(log)
@@ -101,6 +105,7 @@ declare global {
       importConfig: () => Promise<{ success: boolean; error?: string }>
       setAutoStart: (enabled: boolean) => Promise<boolean>
       getAutoStart: () => Promise<boolean>
+      openExternal: (url: string) => Promise<{ success: boolean; error?: string }>
       onFrpcLog: (callback: (log: string) => void) => () => void
       onFrpcStatus: (callback: (status: string) => void) => () => void
       onFrpcError: (callback: (error: string) => void) => () => void

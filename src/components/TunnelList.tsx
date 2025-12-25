@@ -27,7 +27,7 @@ function TunnelList({ tunnels, serverAddr, onEdit, onDelete, onToggle }: TunnelL
   }
 
   const openInBrowser = (addr: string) => {
-    window.open(`http://${addr}`, '_blank')
+    window.electronAPI.openExternal(`http://${addr}`)
     setActivePopup(null)
   }
 
