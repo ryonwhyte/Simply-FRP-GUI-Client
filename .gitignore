@@ -4,10 +4,7 @@ node_modules/
 # Build output
 dist/
 dist-electron/
-# release/ - keeping releases in repo
-release/linux-unpacked/
-release/builder-debug.yml
-release/latest-linux.yml
+release/
 
 # Downloaded binaries (built at build time)
 resources/bin/
