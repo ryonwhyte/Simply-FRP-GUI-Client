@@ -1,6 +1,6 @@
 {
   "name": "simply-frp-gui",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "description": "A lightweight desktop GUI for managing FRP tunnels",
   "main": "dist-electron/main.js",
   "author": {
@@ -16,6 +16,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run icons && tsc && vite build && electron-builder",
+    "build:deb": "npm run icons && rm -f resources/bin/frpc && tsc && vite build && electron-builder --linux deb",
     "build:linux": "npm run icons && npm run download-frpc && tsc && vite build && electron-builder --linux deb AppImage",
     "build:snap": "npm run icons && npm run download-frpc && tsc && vite build && electron-builder --linux snap",
     "build:win": "npm run icons && tsc && vite build && electron-builder --win",
@@ -52,6 +53,8 @@
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
+      "resources/**/*",
+      "!resources/bin/**",
       "package.json"
     ],
     "extraFiles": [
@@ -67,7 +70,13 @@
       "summary": "Desktop GUI for managing FRP tunnels",
       "description": "A lightweight desktop application for managing FRP (Fast Reverse Proxy) tunnels. Expose local services to the internet with ease.",
       "category": "Development",
-      "plugs": ["home", "network", "network-bind", "desktop", "desktop-legacy", "wayland", "x11", "unity7", "browser-support", "password-manager-service"]
+      "plugs": ["home", "network", "network-bind", "desktop", "desktop-legacy", "wayland", "x11", "unity7", "browser-support", "password-manager-service", "gsettings", "gtk-3-themes", "icon-themes", "audio-playback"],
+      "environment": {
+        "FONTCONFIG_PATH": "/etc/fonts",
+        "FONTCONFIG_FILE": "/etc/fonts/fonts.conf",
+        "GTK_USE_PORTAL": "1",
+        "GDK_BACKEND": "x11"
+      }
     },
     "linux": {
       "target": ["deb", "AppImage", "snap"],

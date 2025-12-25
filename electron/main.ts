@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, dialog, shell } from 'electron'
-import { join } from 'path'
-import { writeFileSync, readFileSync } from 'fs'
+import { join, dirname } from 'path'
+import { writeFileSync, readFileSync, existsSync } from 'fs'
 import { FrpcManager } from './frpc-manager'
 import { ConfigManager } from './config-manager'
 
@@ -13,11 +13,27 @@ let isQuitting: boolean = false
 // Determine if we're in development or production
 const isDev = process.env.VITE_DEV_SERVER_URL !== undefined
 
-function getIconPath() {
-  if (isDev) {
-    return join(__dirname, '../resources/icon.png')
+function getIconPath(): string | null {
+  const possiblePaths = [
+    // Development
+    join(__dirname, '../resources/icon.png'),
+    // Production - relative to app path
+    join(app.getAppPath(), 'resources', 'icon.png'),
+    // Snap/AppImage - relative to exe directory
+    join(dirname(app.getPath('exe')), 'resources', 'icon.png'),
+    // Alternative location
+    join(dirname(app.getPath('exe')), 'resources', 'icons', '256x256.png'),
+    join(app.getAppPath(), 'resources', 'icons', '256x256.png'),
+  ]
+
+  for (const iconPath of possiblePaths) {
+    if (existsSync(iconPath)) {
+      return iconPath
+    }
   }
-  return join(app.getAppPath(), 'resources', 'icon.png')
+
+  console.error('Could not find icon at any of:', possiblePaths)
+  return null
 }
 
 function createAppMenu() {
@@ -139,10 +155,23 @@ function createAppMenu() {
 }
 
 function createTray() {
-  if (tray) return
+  if (tray) {
+    tray.destroy()
+    tray = null
+  }
 
   const iconPath = getIconPath()
+  if (!iconPath) {
+    console.error('Cannot create tray: icon not found')
+    return
+  }
+
   const icon = nativeImage.createFromPath(iconPath)
+  if (icon.isEmpty()) {
+    console.error('Cannot create tray: icon is empty')
+    return
+  }
+
   tray = new Tray(icon.resize({ width: 22, height: 22 }))
 
   updateTrayMenu()
@@ -359,11 +388,41 @@ ipcMain.handle('app:getAutoStart', async () => {
   return settings.openAtLogin
 })
 
+// Open external URL in system browser
+ipcMain.handle('app:openExternal', async (_event, url: string) => {
+  try {
+    await shell.openExternal(url)
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: String(error) }
+  }
+})
+
+// Single instance lock - prevent multiple instances
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, focus our window
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      if (!mainWindow.isVisible()) mainWindow.show()
+      mainWindow.focus()
+    }
+  })
+}
+
 // App lifecycle
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
   frpcManager?.stop()
+  if (tray) {
+    tray.destroy()
+    tray = null
+  }
   if (process.platform !== 'darwin') {
     app.quit()
   }

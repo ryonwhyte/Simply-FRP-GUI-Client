@@ -137,7 +137,7 @@ function Settings({ config, onSave, onCancel }: SettingsProps) {
             />
             <button
               type="button"
-              className={`btn btn-small ${testStatus === 'success' ? 'btn-success' : testStatus === 'error' ? 'btn-danger' : ''}`}
+              className={`btn btn-small ${testStatus === 'success' ? 'btn-success' : testStatus === 'error' ? 'btn-danger' : 'btn-secondary'}`}
               onClick={handleTestConnection}
               disabled={testStatus === 'testing'}
             >

@@ -53,5 +53,3 @@ coverage/
 # Generated config (runtime)
 frpc.toml
 .venv/
-flatpak/repo/
-docs/FLATHUB_PUBLISHING.md

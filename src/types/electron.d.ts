@@ -38,6 +38,7 @@ interface ElectronAPI {
   importConfig: () => Promise<{ success: boolean; error?: string }>
   setAutoStart: (enabled: boolean) => Promise<boolean>
   getAutoStart: () => Promise<boolean>
+  openExternal: (url: string) => Promise<{ success: boolean; error?: string }>
   onFrpcLog: (callback: (log: string) => void) => () => void
   onFrpcStatus: (callback: (status: string) => void) => () => void
   onFrpcError: (callback: (error: string) => void) => () => void
